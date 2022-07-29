@@ -6,7 +6,13 @@ import { Command, Event, EventType } from "./models";
 export const collection = new Collection();
 
 export function startBot() {
-  const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+  const client = new Client({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
+    ],
+  });
 
   configBotEvents(client);
   configBotCommands();
