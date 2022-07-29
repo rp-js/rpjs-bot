@@ -1,4 +1,4 @@
-import { Client, Guild, TextChannel } from "discord.js";
+import { Client, TextChannel } from "discord.js";
 import { database } from "firebase-admin";
 import { ReactionConfig } from "../models";
 
@@ -44,6 +44,7 @@ async function sendMessage(
 
   db.ref(`servers/${guildId}/reaction-roles`).set({
     ...reactionConfig,
+    messageId: message.id,
     sended: true,
   });
 }

@@ -1,6 +1,5 @@
-import { Client, TextChannel } from "discord.js";
-import { Event } from "../models";
-import { EventType } from "../models/event.model";
+import { Client } from "discord.js";
+import { Event, EventType } from "../models";
 import { reactionRoles } from "../utils/reaction";
 
 const ready: Event = {

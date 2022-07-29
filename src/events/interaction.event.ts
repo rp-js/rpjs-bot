@@ -1,6 +1,5 @@
 import { Interaction, CacheType } from "discord.js";
-import { Event } from "../models";
-import { EventType } from "../models/event.model";
+import { Event, EventType } from "../models";
 import { collection } from "../server";
 
 async function onInteraction(interaction: Interaction<CacheType>) {
