@@ -5,21 +5,6 @@ import { Command, Event, EventType } from "./models";
 
 export const collection = new Collection();
 
-export function startBot() {
-  const client = new Client({
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.GuildMessageReactions,
-    ],
-  });
-
-  configBotEvents(client);
-  configBotCommands();
-
-  client.login(process.env.TOKEN);
-}
-
 export function configBotEvents(client: Client) {
   const eventsPath = join(__dirname, "events");
   const eventFiles = readdirSync(eventsPath).filter((file) =>

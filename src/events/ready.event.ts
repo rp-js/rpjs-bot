@@ -1,19 +1,18 @@
-import { Client } from "discord.js";
 import { Event, EventType } from "../models";
 import { reactionRoles } from "../utils/reaction";
 
 const ready: Event = {
   name: "ready",
   type: EventType.once,
-  function: (client: Client) => {
+  function: () => {
     console.log(`Bot iniciado!`);
 
-    initResourses(client);
+    initResourses();
   },
 };
 
-function initResourses(client: Client) {
-  reactionRoles(client);
+function initResourses() {
+  reactionRoles();
 }
 
 export default ready;

@@ -1,50 +1,33 @@
-import { Client, TextChannel } from "discord.js";
+import { Client, Message, TextChannel } from "discord.js";
 import { database } from "firebase-admin";
-import { ReactionConfig } from "../models";
+import { client } from "..";
 
 const db = database();
 
-export async function reactionRoles(client: Client) {
-  client.guilds.cache.forEach((guild) => {
-    sendMessages(client, guild.id);
-  });
+export async function reactionRoles() {
+  const message = await sendMessage("1002309210148712470", "teste menssagem");
 
-  client.emojis.cache.forEach((emoji) => {
-    console.log(emoji);
-  });
+  if (!message) return;
+
+  reactMessage("testando", message);
 }
 
-function sendMessages(client: Client, guildId: string) {
-  db.ref(`servers/${guildId}/reaction-roles`).on("value", (snapshot) => {
-    const data: ReactionConfig = snapshot.val();
-
-    if (data.activate) {
-      sendMessage(data, client, guildId);
-    }
-  });
-}
-
-async function sendMessage(
-  reactionConfig: ReactionConfig,
-  client: Client,
-  guildId: string
-) {
-  if (!reactionConfig.activate || reactionConfig.sended) return;
-
-  const channel = client.channels.cache.get(
-    reactionConfig.channel
-  ) as TextChannel;
+async function sendMessage(channelId: string, messageString: string) {
+  const channel = client.channels.cache.get(channelId) as TextChannel;
 
   if (!channel) {
-    console.error("o canal escolhido não existe");
-    return;
+    throw new Error("o canal escolhido não existe");
   }
 
-  const message = await channel.send(reactionConfig.message);
+  const message = await channel.send(messageString);
 
-  db.ref(`servers/${guildId}/reaction-roles`).set({
-    ...reactionConfig,
-    messageId: message.id,
-    sended: true,
-  });
+  return message;
+}
+
+async function reactMessage(emojiName: string, message: Message) {
+  const emoji = client.emojis.cache.find((emoji) => emoji.name === emojiName);
+
+  if (!emoji) return;
+
+  message.react(emoji);
 }

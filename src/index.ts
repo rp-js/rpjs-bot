@@ -1,10 +1,24 @@
 import initializeFirebase from "../firebase/admin";
 import { config } from "dotenv";
 import { commandsDeploy } from "./commands-deploy";
-import { startBot } from "./server";
+import { configBotCommands, configBotEvents } from "./server";
+import { Client, GatewayIntentBits } from "discord.js";
 
 config();
 
 initializeFirebase();
 commandsDeploy();
-startBot();
+
+export const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildEmojisAndStickers,
+  ],
+});
+
+configBotEvents(client);
+configBotCommands();
+
+client.login(process.env.TOKEN);
