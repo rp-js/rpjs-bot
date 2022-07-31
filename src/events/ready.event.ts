@@ -1,5 +1,5 @@
 import { Event, EventType } from "../models";
-import { reactionRoles } from "../utils/reaction";
+import { reactionRoles } from "../utils";
 
 const ready: Event = {
   name: "ready",
