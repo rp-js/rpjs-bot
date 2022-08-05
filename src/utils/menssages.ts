@@ -1,40 +1,57 @@
 import { Message, TextChannel } from "discord.js";
 import { client } from "..";
+import { MessageModel, ReactionMessageModel, ReactionModel } from "../models";
+import { setReactionMessage } from "./firebase";
 
-export async function reactionRoles() {
-  const messageText = "reage aí";
-  const reactions: string[] = ["teste", "testando"];
+export const messagesReactions: string[] = [];
 
-  const guilds = await client.guilds.cache.get("1002309209699917894");
+export async function reactionRoles(data: ReactionMessageModel) {
+  const guilds = await client.guilds.cache.get(data.message.guildId);
   const channel = guilds?.channels.cache.get(
-    "1002309210148712470"
+    data.message.channelId
   ) as TextChannel;
 
-  await channel.messages.fetch("1004958653222223872");
+  try {
+    await channel.messages.fetch(data.message.messageId);
+  } catch (error) {
+    console.log(error);
+  }
 
-  const message = await channel.messages.cache.get("1004958653222223872");
+  const message = await channel.messages.cache.get(data.message.messageId);
 
   if (!message) return;
 
   await message.reactions.removeAll();
 
-  const sended = true;
+  if (!data.sended) {
+    const messageData = await createReactionMessage(
+      data.message,
+      data.reactions
+    );
 
-  if (!sended) {
-    createReactionMessage("1002309210148712470", messageText, reactions);
-    return;
+    if (!messageData) return;
+
+    const message: MessageModel = {
+      ...data.message,
+      messageId: messageData.id,
+    };
+
+    setReactionMessage({
+      ...data,
+      message: message,
+      sended: true,
+    });
   }
 
-  verifyReactions(message, reactions);
+  await verifyReactions(message, data.reactions);
 }
 
 export async function createReactionMessage(
-  channelId: string,
-  messageText: string,
-  reactions: string[]
+  messageData: MessageModel,
+  reactions: ReactionModel[]
 ) {
   try {
-    const message = await sendMessage(channelId, messageText);
+    const message = await sendMessage(messageData);
 
     await Promise.all(
       reactions.map(async (reaction) => {
@@ -48,18 +65,23 @@ export async function createReactionMessage(
   }
 }
 
+/**
+ * verifica se as reações estão na menssagem
+ */
 export async function verifyReactions(
   message: Message,
-  reactionsName: string[]
+  reactions: ReactionModel[]
 ) {
   await Promise.all(
-    reactionsName.map(async (reactionName) => {
-      if (
-        !message.reactions.cache.find(
-          (react) => react.emoji.name === reactionName
-        )
-      ) {
-        await reactMessage(reactionName, message);
+    reactions.map(async (reaction) => {
+      const react = message.reactions.cache.find(
+        (react) => react.emoji.name === reaction.name
+      );
+
+      if (!react) {
+        await reactMessage(reaction, message);
+      } else {
+        console.log("testando");
       }
     })
   );
@@ -67,29 +89,33 @@ export async function verifyReactions(
   return true;
 }
 
-export async function sendMessage(channelId: string, messageText: string) {
-  const channel = client.channels.cache.get(channelId) as TextChannel;
+export async function sendMessage(messageData: MessageModel) {
+  const channel = client.channels.cache.get(
+    messageData.channelId
+  ) as TextChannel;
 
   if (!channel) {
     throw new Error("o canal escolhido não existe");
   }
 
-  const message = await channel.send(messageText);
+  const message = await channel.send(messageData.messageText);
 
   if (!message) {
-    throw new Error(`Menssagem "${messageText}", não enviada`);
+    throw new Error(`Menssagem "${messageData.messageText}", não enviada`);
   }
 
   return message;
 }
 
-export async function reactMessage(emojiName: string, message: Message) {
-  const emoji = client.emojis.cache.find((emoji) => emoji.name === emojiName);
+/**
+ * Reage uma menssagem com um emoji do servidor
+ */
+export async function reactMessage(reaction: ReactionModel, message: Message) {
+  const emoji = client.emojis.cache.find(
+    (emoji) => emoji.name === reaction.name
+  );
 
-  if (!emoji) {
-    message.react(emojiName);
-    return;
-  }
+  if (!emoji) return;
 
   try {
     await message.react(emoji);

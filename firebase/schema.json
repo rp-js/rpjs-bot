@@ -1,0 +1,48 @@
+{
+  "servers": {
+    "1002309209699917894": {
+      "reaction-roles": {
+        "sended": true,
+        "active": true,
+        "message": {
+          "guildId": "1002309209699917894",
+          "channelId": "1002309210148712470",
+          "messageId": "1004958653222223872",
+          "messageText": "reage aí"
+        },
+        "reactions": [
+          {
+            "name": "teste",
+            "role": "teste"
+          },
+          {
+            "name": "testando",
+            "role": "testando"
+          }
+        ]
+      }
+    },
+    "1002482791260368946": {
+      "reaction-roles": {
+        "sended": true,
+        "active": false,
+        "message": {
+          "guildId": "1002482791260368946",
+          "channelId": "1002482791985975368",
+          "messageId": "",
+          "messageText": "reage aí"
+        },
+        "reactions": [
+          {
+            "name": "teste",
+            "role": "teste"
+          },
+          {
+            "name": "testando",
+            "role": "testando"
+          }
+        ]
+      }
+    }
+  }
+}

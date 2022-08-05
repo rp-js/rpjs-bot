@@ -1,5 +1,5 @@
 import { Event, EventType } from "../models";
-import { reactionRoles } from "../utils";
+import { reactionRolesStart } from "../utils/firebase";
 
 const ready: Event = {
   name: "ready",
@@ -12,7 +12,7 @@ const ready: Event = {
 };
 
 function initResourses() {
-  reactionRoles();
+  reactionRolesStart();
 }
 
 export default ready;
