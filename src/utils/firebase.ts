@@ -1,7 +1,7 @@
 import { database } from "firebase-admin";
 import { client } from "..";
 import { ReactionMessageModel } from "../models";
-import { messagesReactions, reactionRoles } from "./menssages";
+import { reactionRoles } from "./menssages";
 
 export async function setReactionMessage(data: ReactionMessageModel) {
   const { guildId } = data.message;
@@ -21,7 +21,6 @@ export async function reactionRolesStart() {
 
       if (data.active) {
         reactionRoles(data);
-        messagesReactions.push(data.message.messageId);
       }
     });
   });

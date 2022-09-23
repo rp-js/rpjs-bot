@@ -6,23 +6,6 @@ import { setReactionMessage } from "./firebase";
 export const messagesReactions: string[] = [];
 
 export async function reactionRoles(data: ReactionMessageModel) {
-  const guilds = await client.guilds.cache.get(data.message.guildId);
-  const channel = guilds?.channels.cache.get(
-    data.message.channelId
-  ) as TextChannel;
-
-  try {
-    await channel.messages.fetch(data.message.messageId);
-  } catch (error) {
-    console.log(error);
-  }
-
-  const message = await channel.messages.cache.get(data.message.messageId);
-
-  if (!message) return;
-
-  await message.reactions.removeAll();
-
   if (!data.sended) {
     const messageData = await createReactionMessage(
       data.message,
@@ -41,7 +24,25 @@ export async function reactionRoles(data: ReactionMessageModel) {
       message: message,
       sended: true,
     });
+    return;
   }
+
+  const guilds = await client.guilds.cache.get(data.message.guildId);
+  const channel = guilds?.channels.cache.get(
+    data.message.channelId
+  ) as TextChannel;
+
+  try {
+    await channel.messages.fetch(data.message.messageId);
+  } catch (error) {
+    console.log(error);
+  }
+
+  const message = await channel.messages.cache.get(data.message.messageId);
+
+  if (!message) return;
+
+  await message.reactions.removeAll();
 
   await verifyReactions(message, data.reactions);
 }
